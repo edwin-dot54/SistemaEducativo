@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if rol %}Editar{% else %}Nuevo{% endif %} Rol{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-badge"></i> 
+                        {% if rol %}Editar{% else %}Nuevo{% endif %} Rol
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_nombre_rol" class="form-label">Nombre del Rol</label>
+                            <input type="text" 
+                                   name="nombre_rol" 
+                                   class="form-control" 
+                                   id="id_nombre_rol" 
+                                   value="{{ rol.nombre_rol|default:'' }}"
+                                   placeholder="Ej: Administrador, Profesor, Estudiante"
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_descripcion" class="form-label">Descripción</label>
+                            <textarea name="descripcion" 
+                                     class="form-control" 
+                                     id="id_descripcion" 
+                                     rows="3">{{ rol.descripcion|default:'' }}</textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Guardar
+                            </button>
+                            <a href="{% url 'rol_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

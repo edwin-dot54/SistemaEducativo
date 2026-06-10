@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if materia %}Editar{% else %}Nueva{% endif %} Materia{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-book"></i> 
+                        {% if materia %}Editar{% else %}Nueva{% endif %} Materia
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_nombre_materia" class="form-label">Nombre de la Materia</label>
+                            <input type="text" 
+                                   name="nombre_materia" 
+                                   class="form-control" 
+                                   id="id_nombre_materia" 
+                                   value="{{ materia.nombre_materia|default:'' }}"
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_descripcion" class="form-label">Descripción</label>
+                            <textarea name="descripcion" 
+                                     class="form-control" 
+                                     id="id_descripcion" 
+                                     rows="3">{{ materia.descripcion|default:'' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_intensidad_horaria" class="form-label">Intensidad Horaria</label>
+                            <input type="number" 
+                                   name="intensidad_horaria" 
+                                   class="form-control" 
+                                   id="id_intensidad_horaria" 
+                                   value="{{ materia.intensidad_horaria|default:'0' }}"
+                                   min="0">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_grado" class="form-label">Grado</label>
+                            <select name="id_grado" class="form-select" id="id_grado" required>
+                                <option value="">Seleccionar...</option>
+                                {% for grado in degrees %}
+                                <option value="{{ grado.pk }}" {% if materia.id_grado_id == grado.pk %}selected

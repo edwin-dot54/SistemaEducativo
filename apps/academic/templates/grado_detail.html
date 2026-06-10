@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ grado.nombre_grado }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-grid"></i> {{ grado.nombre_grado }}</h2>
+            <p class="text-muted mb-0">
+                {{ grado.get_nivel_display }} - {{ grado.get_jornada_display|default:"-" }}
+            </p>
+        </div>
+        <div>
+            <a href="{% url 'grado_edit' grado.pk %}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            <a href="{% url 'grado_delete' grado.pk %}" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Eliminar
+            </a>
+        </div>
+    </div>
+
+    <!-- Materias -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="bi bi-book"></i> Materias</h5>
+        </div>
+        <div class="card-body">
+            {% if materias %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Materia</th>
+                            <th>Profesor</th>
+                            <th>Horas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for materia in materias %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'materia_detail' materia.pk %}">
+                                    {{ materia.nombre_materia }}
+                                </a>
+                            </td>
+                            <td>{{ materia.id_profesor|default:"Sin asignar" }}</td>
+                            <td>{{ materia.intensidad_horaria }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-muted">No hay materias asignadas a este grado</p>
+            {% endif %}
+            <a href="{% url 'materia_create' %}?grado={{ grado.pk }}" class="btn btn-sm btn-primary">
+                <i class="bi bi-plus-circle"></i> Agregar Materia
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

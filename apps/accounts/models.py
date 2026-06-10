@@ -16,7 +16,8 @@ class Rol(models.Model):
 
 
 class Usuario(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
+    username = models.CharField(max_length=50, unique=True)
+    password = models.CharField(max_length=50, unique=True)
     telefono = models.CharField(max_length=20, blank=True)
     estado = models.CharField(
         max_length=20,

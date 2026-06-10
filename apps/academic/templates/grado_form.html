@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if grado %}Editar{% else %}Nuevo{% endif %} Grado{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-grid"></i> 
+                        {% if grado %}Editar{% else %}Nuevo{% endif %} Grado
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_nombre_grado" class="form-label">Nombre del Grado</label>
+                            <input type="text" 
+                                   name="nombre_grado" 
+                                   class="form-control" 
+                                   id="id_nombre_grado" 
+                                   value="{{ grado.nombre_grado|default:'' }}"
+                                   placeholder="Ej: 10A" 
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_nivel" class="form-label">Nivel</label>
+                            <select name="nivel" class="form-select" id="id_nivel" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="preescolar" {% if grado.nivel == 'preescolar' %}selected{% endif %}>
+                                    Preescolar
+                                </option>
+                                <option value="primaria" {% if grado.nivel == 'primaria' %}selected{% endif %}>
+                                    Primaria
+                                </option>
+                                <option value="bachillerato" {% if grado.nivel == 'bachillerato' %}selected{% endif %}>
+                                    Bachillerato
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_jornada" class="form-label">Jornada</label>
+                            <select name="jornada" class="form-select" id="id_jornada">
+                                <option value="">Seleccionar...</option>
+                                <option value="mañana" {% if grado.jornada == 'mañana' %}selected{% endif %}>
+                                    Mañana
+                                </option>
+                                <option value="tarde" {% if grado.jornada == 'tarde' %}selected{% endif %}>
+                                    Tarde
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Guardar
+                            </button>
+                            <a href="{% url 'grado_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

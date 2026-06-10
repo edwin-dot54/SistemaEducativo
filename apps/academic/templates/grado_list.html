@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Grados{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-grid"></i> Lista de Grados</h2>
+        <a href="{% url 'grado_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo Grado
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Buscar</label>
+                    <input type="text" name="buscar" class="form-control" placeholder="Nombre del grado">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Nivel</label>
+                    <select name="nivel" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="preescolar">Preescolar</option>
+                        <option value="primaria">Primaria</option>
+                        <option value="bachillerato">Bachillerato</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Jornada</label>
+                    <select name="jornada" class="form-select">
+                        <option value="">Todas</option>
+                        <option value="mañana">Mañana</option>
+                        <option value="tarde">Tarde</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Nivel</th>
+                            <th>Jornada</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grado in page_obj %}
+                        <tr>
+                            <td>{{ grado.nombre_grado }}</td>
+                            <td>{{ grado.get_nivel_display }}</td>
+                            <td>{{ grado.get_jornada_display|default:"-" }}</td>
+                            <td>
+                                <a href="{% url 'grado_detail' grado.pk %}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'grado_edit' grado.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'grado_delete' grado.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No hay grados registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Paginación -->
+            {% if page_obj.has_other_pages %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Anterior</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.next_page_number }}" class="page-link">Siguiente</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

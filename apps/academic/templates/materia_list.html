@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Materias{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-book"></i> Lista de Materias</h2>
+        <a href="{% url 'materia_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nueva Materia
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Buscar</label>
+                    <input type="text" name="buscar" class="form-control" placeholder="Nombre de la materia">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Grado</label>
+                    <select name="grado" class="form-select">
+                        <option value="">Todos</option>
+                        {% for grado in grados %}
+                        <option value="{{ grado.pk }}">{{ grado.nombre_grado }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Materia</th>
+                            <th>Grado</th>
+                            <th>Profesor</th>
+                            <th>Horas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for materia in page_obj %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'materia_detail' materia.pk %}">
+                                    {{ materia.nombre_materia }}
+                                </a>
+                            </td>
+                            <td>{{ materia.id_grado }}</td>
+                            <td>{{ materia.id_profesor|default:"Sin asignar" }}</td>
+                            <td>{{ materia.intensidad_horaria }}</td>
+                            <td>
+                                <a href="{% url 'materia_detail' materia.pk %}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'materia_edit' materia.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'materia_delete' materia.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No hay materias registradas</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Paginación -->
+            {% if page_obj.has_other_pages %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Anterior</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.next_page_number }}" class="page-link">Siguiente</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

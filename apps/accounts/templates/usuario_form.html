@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if usuario %}Editar{% else %}Nuevo{% endif %} Usuario{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-plus"></i> 
+                        {% if usuario %}Editar{% else %}Nuevo{% endif %} Usuario
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" 
+                                   name="username" 
+                                   class="form-control" 
+                                   id="id_username" 
+                                   value="{{ usuario.username|default:'' }}"
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">
+                                Contraseña {% if usuario %}(dejar en blanco para mantener){% endif %}
+                            </label>
+                            <input type="password" 
+                                   name="password" 
+                                   class="form-control" 
+                                   id="id_password" 
+                                   {% if not usuario %}required{% endif %}>
+                        </div>
+                        
+                        {% if not usuario %}
+                        <div class="mb-3">
+                            <label for="id_confirm_password" class="form-label">Confirmar Contraseña</label>
+                            <input type="password" 
+                                   name="confirm_password" 
+                                   class="form-control" 
+                                   id="id_confirm_password" 
+                                   required>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="id_telefono" class="form-label">Teléfono</label>
+                            <input type="text" 
+                                   name="telefono" 
+                                   class="form-control" 
+                                   id="id_telefono" 
+                                   value="{{ usuario.telefono|default:'' }}">
+                        </div>
+                        
+                        {% if usuario %}
+                        <div class="mb-3">
+                            <label for="id_estado" class="form-label">Estado</label>
+                            <select name="estado" class="form-select" id="id_estado">
+                                <option value="activo" {% if usuario.estado == 'activo' %}selected{% endif %}>Activo</option>
+                                <option value="inactivo" {% if usuario.estado == 'inactivo' %}selected{% endif %}>Inactivo</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="id_rol" class="form-label">Rol</label>
+                            <select name="id_rol" class="form-select" id="id_rol">
+                                <option value="">Seleccionar...</option>
+                                {% for rol in roles %}
+                                <option value="{{ rol.pk }}" {% if usuario.id_rol_id == rol.pk %}selected{% endif %}>
+                                    {{ rol.nombre_rol }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Guardar
+                            </button>
+                            <a href="{% url 'usuario_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
