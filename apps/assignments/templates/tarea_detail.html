@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ tarea.titulo }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-journal-text"></i> {{ tarea.titulo }}</h2>
+            <p class="text-muted mb-0">
+                {{ tarea.id_materia }} - {{ tarea.id_profesor }}
+            </p>
+        </div>
+        <div>
+            <a href="{% url 'tarea_edit' tarea.pk %}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            <a href="{% url 'tarea_delete' tarea.pk %}" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Eliminar
+            </a>
+        </div>
+    </div>
+
+    <!-- Detalles -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Descripción</h5>
+                </div>
+                <div class="card-body">
+                    {% if tarea.descripcion %}
+                    <p>{{ tarea.descripcion|linebreaks }}</p>
+                    {% else %}
+                    <p class="text-muted">Sin descripción</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Información</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Materia:</strong></td>
+                            <td>{{ tarea.id_materia }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Profesor:</strong></td>
+                            <td>{{ tarea.id_profesor }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fecha de Entrega:</strong></td>
+                            <td>{{ tarea.fecha_entrega|date:"d/m/Y" }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fecha de Creación:</strong></td>
+                            <td>{{ tarea.created_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

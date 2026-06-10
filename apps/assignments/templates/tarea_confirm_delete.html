@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Eliminar Tarea{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-exclamation-triangle text-warning"></i> 
+                        Confirmar Eliminación
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p>¿Está seguro de que desea eliminar esta tarea?</p>
+                    
+                    <div class="alert alert-danger">
+                        <strong>Título:</strong> {{ tarea.titulo }}<br>
+                        <strong>Materia:</strong> {{ tarea.id_materia }}<br>
+                        <strong>Fecha de Entrega:</strong> {{ tarea.fecha_entrega|date:"d/m/Y" }}
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                            <a href="{% url 'tarea_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

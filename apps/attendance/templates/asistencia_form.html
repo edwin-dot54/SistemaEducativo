@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if asistencia %}Editar{% else %}Nueva{% endif %} Asistencia{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-calendar-check"></i> 
+                        {% if asistencia %}Editar{% else %}Nueva{% endif %} Asistencia
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_estudiante" class="form-label">Estudiante</label>
+                            <select name="id_estudiante" class="form-select" id="id_estudiante" required>
+                                <option value="">Seleccionar...</option>
+                                {% for estudiante in estudiantes %}
+                                <option value="{{ estudiante.pk }}" {% if asistencia.id_estudiante_id == estudiante.pk %}selected{% endif %}>
+                                    {{ estudiante.nombre }} {{ estudiante.apellido }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_fecha" class="form-label">Fecha</label>
+                            <input type="date" 
+                                   name="fecha" 
+                                   class="form-control" 
+                                   id="id_fecha" 
+                                   value="{{ asistencia.fecha|default:'' }}"
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_estado" class="form-label">Estado</label>
+                            <select name="estado" class="form-select" id="id_estado" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="presente" {% if asistencia.estado == 'presente' %}selected{% endif %}>Presente</option>
+                                <option value="ausente" {% if asistencia.estado == 'ausente' %}selected{% endif %}>Ausente</option>
+                                <option value="tarde" {% if asistencia.estado == 'tarde' %}selected{% endif %}>Tarde</option>
+                                <option value="justificado" {% if asistencia.estado == 'justificado' %}selected{% endif %}>Justificado</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_observacion" class="form-label">Observación</label>
+                            <textarea name="observacion" 
+                                     class="form-control" 
+                                     id="id_observacion" 
+                                     rows="3">{{ asistencia.observacion|default:'' }}</textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Guardar
+                            </button>
+                            <a href="{% url 'asistencia_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

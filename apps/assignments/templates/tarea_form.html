@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if tarea %}Editar{% else %}Nueva{% endif %} Tarea{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-journal-text"></i> 
+                        {% if tarea %}Editar{% else %}Nueva{% endif %} Tarea
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_titulo" class="form-label">Título de la Tarea</label>
+                            <input type="text" 
+                                   name="titulo" 
+                                   class="form-control" 
+                                   id="id_titulo" 
+                                   value="{{ tarea.titulo|default:'' }}"
+                                   placeholder="Ej: Ejercicios de Álgebra"
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_descripcion" class="form-label">Descripción</label>
+                            <textarea name="descripcion" 
+                                     class="form-control" 
+                                     id="id_descripcion" 
+                                     rows="4">{{ tarea.descripcion|default:'' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_fecha_entrega" class="form-label">Fecha de Entrega</label>
+                            <input type="date" 
+                                   name="fecha_entrega" 
+                                   class="form-control" 
+                                   id="id_fecha_entrega" 
+                                   value="{{ tarea.fecha_entrega|default:'' }}"
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_materia" class="form-label">Materia</label>
+                            <select name="id_materia" class="form-select" id="id_materia" required>
+                                <option value="">Seleccionar...</option>
+                                {% for materia in materias %}
+                                <option value="{{ materia.pk }}" {% if tarea.id_materia_id == materia.pk %}selected{% endif %}>
+                                    {{ materia.nombre_materia }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_profesor" class="form-label">Profesor</label>
+                            <select name="id_profesor" class="form-select" id="id_profesor" required>
+                                <option value="">Seleccionar...</option>
+                                {% for profesor in professores %}
+                                <option value="{{ profesor.pk }}" {% if tarea.id_profesor_id == profesor.pk %}selected{% endif %}>
+                                    {{ profesor.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Guardar
+                            </button>
+                            <a href="{% url 'tarea_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
