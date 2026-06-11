@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Pagos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cash-stack"></i> Lista de Pagos</h2>
+        <a href="{% url 'pago_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo Pago
+        </a>
+    </div>
+
+    <!-- Totales -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="text-muted">Total Pendiente</h5>
+                    <h3 class="text-warning">${{ total_pendiente }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="text-muted">Total Pagado</h5>
+                    <h3 class="text-success">${{ total_pagado }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Estudiante</label>
+                    <select name="estudiante" class="form-select">
+                        <option value="">Todos</option>
+                        {% for estudiante in estudiantes %}
+                        <option value="{{ estudiante.pk }}">{{ estudiante.nombre }} {{ estudiante.apellido }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Concepto</label>
+                    <select name="concepto" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="matricula">Matrícula</option>
+                        <option value="pension">Pensión</option>
+                        <option value="materiales">Materiales</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Estado</label>
+                    <select name="estado" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="pagado">Pagado</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="atrasado">Atrasado</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Concepto</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Fecha Pago</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pago in page_obj %}
+                        <tr>
+                            <td>{{ pago.id_estudiante }}</td>
+                            <td>{{ pago.get_concepto_display }}</td>
+                            <td>${{ pago.monto }}</td>
+                            <td>
+                                {% if pago.estado == 'pagado' %}
+                                <span class="badge bg-success">Pagado</span>
+                                {% elif pago.estado == 'pendiente' %}
+                                <span class="badge bg-warning">Pendiente</span>
+                                {% else %}
+                                <span class="badge bg-danger">Atrasado</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ pago.fecha_pago|date:"d/m/Y"|default:"-" }}</td>
+                            <td>
+                                <a href="{% url 'pago_detail' pago.pk %}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if pago.estado != 'pagado' %}
+                                <a href="{% url 'pago_registrar' pago.pk %}" class="btn btn-sm btn-success">
+                                    <i class="bi bi-check"></i>
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'pago_edit' pago.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'pago_delete' pago.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No hay pagos registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if page_obj.has_other_pages %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Anterior</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.next_page_number }}" class="page-link">Siguiente</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
