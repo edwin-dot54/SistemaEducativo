@@ -2,14 +2,14 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Grados
+    # ================= GRADOS =================
     path('grado/', views.grado_list, name='grado_list'),
     path('grado/<int:pk>/', views.grado_detail, name='grado_detail'),
     path('grado/create/', views.grado_create, name='grado_create'),
     path('grado/<int:pk>/edit/', views.grado_edit, name='grado_edit'),
     path('grado/<int:pk>/delete/', views.grado_delete, name='grado_delete'),
     
-    # Materias
+    # ================= MATERIAS =================
     path('materia/', views.materia_list, name='materia_list'),
     path('materia/<int:pk>/', views.materia_detail, name='materia_detail'),
     path('materia/create/', views.materia_create, name='materia_create'),

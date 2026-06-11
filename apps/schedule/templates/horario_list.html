@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Horarios{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-clock"></i> Lista de Horarios</h2>
+        <a href="{% url 'horario_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo Horario
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Grado</label>
+                    <select name="grado" class="form-select">
+                        <option value="">Todos</option>
+                        {% for grado in grado %}
+                        <option value="{{ grado.pk }}">{{ grado.nombre_grado }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Materia</label>
+                    <select name="materia" class="form-select">
+                        <option value="">Todas</option>
+                        {% for materia in materias %}
+                        <option value="{{ materia.pk }}">{{ materia.nombre_materia }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Día</label>
+                    <select name="dia" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="lunes">Lunes</option>
+                        <option value="martes">Martes</option>
+                        <option value="miercoles">Miércoles</option>
+                        <option value="jueves">Jueves</option>
+                        <option value="viernes">Viernes</option>
+                        <option value="sabado">Sábado</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Grado</th>
+                            <th>Materia</th>
+                            <th>Día</th>
+                            <th>Hora Inicio</th>
+                            <th>Hora Fin</th>
+                            <th>Aula</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for horario in page_obj %}
+                        <tr>
+                            <td>{{ horario.id_grado }}</td>
+                            <td>{{ horario.id_materia }}</td>
+                            <td>{{ horario.get_dia_semana_display }}</td>
+                            <td>{{ horario.hora_inicio|time:"H:i" }}</td>
+                            <td>{{ horario.hora_fin|time:"H:i" }}</td>
+                            <td>{{ horario.aula|default:"-" }}</td>
+                            <td>
+                                <a href="{% url 'horario_detail' horario.pk %}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'horario_edit' horario.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'horario_delete' horario.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No hay horarios registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if page_obj.has_other_pages %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Anterior</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.next_page_number }}" class="page-link">Siguiente</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -14,4 +14,8 @@ urlpatterns = [
     path('rol/create/', views.rol_create, name='rol_create'),
     path('rol/<int:pk>/edit/', views.rol_edit, name='rol_edit'),
     path('rol/<int:pk>/delete/', views.rol_delete, name='rol_delete'),
+    
+    # ================= LOGIN =================
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 ]

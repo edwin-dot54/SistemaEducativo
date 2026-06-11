@@ -1,5 +1,6 @@
 """
 Vistas de la aplicación accounts
+Maneja autenticación y gestión de usuarios
 """
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.contrib.auth import login as django_login, logout as django_logout
+from django.contrib.auth import login, logout
 from .models import Rol, Usuario
 
 
@@ -71,9 +72,9 @@ def usuario_create(request):
             return redirect('usuario_create')
         
         # Crear usuario
-        usuario = Usuario.objects.create(
+        usuario = Usuario(
             username=username,
-            password=password,  # Nota: en producción يجب hacer hash
+            password=password,
             telefono=telefono,
         )
         
@@ -191,3 +192,40 @@ def rol_delete(request, pk):
     
     context = {'rol': rol}
     return render(request, 'accounts/rol_confirm_delete.html', context)
+
+
+# ================= AUTENTICACIÓN =================
+
+def login_view(request):
+    """Vista de inicio de sesión"""
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        try:
+            usuario = Usuario.objects.get(username=username)
+            
+            if usuario.password == password:
+                if usuario.estado == 'activo':
+                    # Iniciar sesión
+                    login(request, usuario)
+                    
+                    messages.success(request, f'Bienvenido {usuario.username}')
+                    return redirect('dashboard')
+                else:
+                    messages.error(request, 'Usuario inactivo')
+            else:
+                messages.error(request, 'Contraseña incorrecta')
+        except Usuario.DoesNotExist:
+            messages.error(request, 'Usuario no existe')
+        
+        return redirect('login')
+    
+    return render(request, 'accounts/login.html')
+
+
+def logout_view(request):
+    """Vista de cierre de sesión"""
+    logout(request)
+    messages.success(request, 'Sesión cerrada correctamente')
+    return redirect('login')
