@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if estudiante %}Editar{% else %}Nuevo{% endif %} Estudiante{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-plus"></i> 
+                        {% if estudiante %}Editar{% else %}Nuevo{% endif %} Estudiante
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_codigo_estudiante" class="form-label">Código de Estudiante</label>
+                                    <input type="text" 
+                                           name="codigo_estudiante" 
+                                           class="form-control" 
+                                           id="id_codigo_estudiante" 
+                                           value="{{ estudiante.codigo_estudiante|default:'' }}"
+                                           placeholder="Ej: EST001"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_grado" class="form-label">Grado</label>
+                                    <select name="id_grado" class="form-select" id="id_grado">
+                                        <option value="">Seleccionar...</option>
+                                        {% for grado in grados %}
+                                        <option value="{{ grado.pk }}" {% if estudiante.id_grado_id == grado.pk %}selected{% endif %}>
+                                            {{ grado.nombre_grado }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_nombre" class="form-label">Nombre</label>
+                                    <input type="text" 
+                                           name="nombre" 
+                                           class="form-control" 
+                                           id="id_nombre" 
+                                           value="{{ estudiante.nombre|default:'' }}"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_apellido" class="form-label">Apellido</label>
+                                    <input type="text" 
+                                           name="apellido" 
+                                           class="form-control" 
+                                           id="id_apellido" 
+                                           value="{{ estudiante.apellido|default:'' }}"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                                    <input type="date" 
+                                           name="fecha_nacimiento" 
+                                           class="form-control" 
+                                           id="id_fecha_nacimiento" 
+                                           value="{{ estudiante.fecha_nacimiento|default:'' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_telefono" class="form-label">Teléfono</label>
+                                    <input type="text" 
+                                           name="telefono" 
+                                           class="form-control" 
+                                           id="id_telefono" 
+                                           value="{{ estudiante.telefono|default:'' }}"
+                                           placeholder="Ej: 3001234567">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_correo" class="form-label">Correo Electrónico</label>
+                            <input type="email" 
+                                   name="correo" 
+                                   class="form-control" 
+                                   id="id_correo" 
+                                   value="{{ estudiante.correo|default:'' }}"
+                                   placeholder="correo@ejemplo.com"
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_direccion" class="form-label">Dirección</label>
+                            <input type="text" 
+                                   name="direccion" 
+                                   class="form-control" 
+                                   id="id_direccion" 
+                                   value="{{ estudiante.direccion|default:'' }}"
+                                   placeholder="Dirección de residencia">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Guardar
+                            </button>
+                            <a href="{% url 'estudiante_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
