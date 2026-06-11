@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if nota %}Editar{% else %}Nueva{% endif %} Nota{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-award"></i> 
+                        {% if nota %}Editar{% else %}Nueva{% endif %} Nota
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_estudiante" class="form-label">Estudiante</label>
+                            <select name="id_estudiante" class="form-select" id="id_estudiante" required>
+                                <option value="">Seleccionar...</option>
+                                {% for estudiante in estudiantes %}
+                                <option value="{{ estudiante.pk }}" {% if nota.id_estudiante_id == estudiante.pk %}selected{% endif %}>
+                                    {{ estudiante.nombre }} {{ estudiante.apellido }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_materia" class="form-label">Materia</label>
+                            <select name="id_materia" class="form-select" id="id_materia" required>
+                                <option value="">Seleccionar...</option>
+                                {% for materia in materiales %}
+                                <option value="{{ materia.pk }}" {% if nota.id_materia_id == materia.pk %}selected{% endif %}>
+                                    {{ materia.nombre_materia }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_periodo" class="form-label">Período</label>
+                            <select name="periodo" class="form-select" id="id_periodo" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="1" {% if nota.periodo == '1' %}selected{% endif %}>Primer Período</option>
+                                <option value="2" {% if nota.periodo == '2' %}selected{% endif %}>Segundo Período</option>
+                                <option value="3" {% if nota.periodo == '3' %}selected{% endif %}>Tercer Período</option>
+                                <option value="4" {% if nota.periodo == '4' %}selected{% endif %}>Cuarto Período</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_nota" class="form-label">Nota (0-10)</label>
+                            <input type="number" 
+                                   name="nota" 
+                                   class="form-control" 
+                                   id="id_nota" 
+                                   value="{{ nota.nota|default:'' }}"
+                                   min="0" 
+                                   max="10" 
+                                   step="0.01"
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_observacion" class="form-label">Observación</label>
+                            <textarea name="observacion" 
+                                     class="form-control" 
+                                     id="id_observacion" 
+                                     rows="3">{{ nota.observacion|default:'' }}</textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Guardar
+                            </button>
+                            <a href="{% url 'nota_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
