@@ -1,6 +1,4 @@
-# apps/accounts/models.py
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class Rol(models.Model):
@@ -17,7 +15,7 @@ class Rol(models.Model):
 
 class Usuario(models.Model):
     username = models.CharField(max_length=50, unique=True)
-    password = models.CharField(max_length=50, unique=True)
+    password = models.CharField(max_length=128)  # ← Aumentado para hash
     telefono = models.CharField(max_length=20, blank=True)
     estado = models.CharField(
         max_length=20,
@@ -38,4 +36,4 @@ class Usuario(models.Model):
         verbose_name_plural = 'Usuarios'
 
     def __str__(self):
-        return self.user.username
+        return self.username  # ← CORREGIDO

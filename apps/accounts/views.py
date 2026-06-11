@@ -8,13 +8,72 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.contrib.auth import login, logout
+from django.contrib.auth.hashers import make_password, check_password
 from .models import Rol, Usuario
+
+
+# ================= AUTENTICACIÓN =================
+
+def login_view(request):
+    """Vista de inicio de sesión"""
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        try:
+            usuario = Usuario.objects.get(username=username)
+            
+            # Verificar contraseña hasheada
+            if check_password(password, usuario.password):
+                if usuario.estado == 'activo':
+                    # Guardar usuario en sesión
+                    request.session['usuario_id'] = usuario.id
+                    request.session['username'] = usuario.username
+                    request.session['rol'] = usuario.id_rol.nombre_rol if usuario.id_rol else ''
+                    
+                    messages.success(request, f'Bienvenido {usuario.username}')
+                    return redirect('usuario_list')
+                else:
+                    messages.error(request, 'Usuario inactivo')
+            else:
+                messages.error(request, 'Contraseña incorrecta')
+        except Usuario.DoesNotExist:
+            messages.error(request, 'Usuario no existe')
+        
+        return redirect('login')
+    
+    return render(request, 'accounts/login.html')
+
+
+def logout_view(request):
+    """Vista de cierre de sesión"""
+    request.session.flush()
+    messages.success(request, 'Sesión cerrada correctamente')
+    return redirect('login')
+
+
+def requerido_login(view_func):
+    """Decorador para requerir login"""
+    def wrapper(request, *args, **kwargs):
+        if 'usuario_id' not in request.session:
+            messages.warning(request, 'Debe iniciar sesión')
+            return redirect('login')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+@requerido_login
+def dashboard(request):
+    """Dashboard principal"""
+    context = {
+        'username': request.session.get('username'),
+    }
+    return render(request, 'accounts/dashboard.html', context)
 
 
 # ================= USUARIOS =================
 
-@login_required
+@requerido_login
 def usuario_list(request):
     """Lista todos los usuarios"""
     usuario_list = Usuario.objects.all().order_by('username')
@@ -44,7 +103,7 @@ def usuario_list(request):
     return render(request, 'accounts/usuario_list.html', context)
 
 
-@login_required
+@requerido_login
 def usuario_detail(request, pk):
     """Muestra el detalle de un usuario"""
     usuario = get_object_or_404(Usuario, pk=pk)
@@ -52,7 +111,7 @@ def usuario_detail(request, pk):
     return render(request, 'accounts/usuario_detail.html', context)
 
 
-@login_required
+@requerido_login
 def usuario_create(request):
     """Crea un nuevo usuario"""
     if request.method == 'POST':
@@ -71,17 +130,13 @@ def usuario_create(request):
             messages.error(request, 'El nombre de usuario ya existe')
             return redirect('usuario_create')
         
-        # Crear usuario
-        usuario = Usuario(
+        # Crear usuario con contraseña hasheada
+        usuario = Usuario.objects.create(
             username=username,
-            password=password,
+            password=make_password(password),
             telefono=telefono,
+            id_rol_id=id_rol_id if id_rol_id else None,
         )
-        
-        if id_rol_id:
-            usuario.id_rol_id = id_rol_id
-        
-        usuario.save()
         
         messages.success(request, 'Usuario creado correctamente')
         return redirect('usuario_list')
@@ -91,7 +146,7 @@ def usuario_create(request):
     return render(request, 'accounts/usuario_form.html', context)
 
 
-@login_required
+@requerido_login
 def usuario_edit(request, pk):
     """Edita un usuario existente"""
     usuario = get_object_or_404(Usuario, pk=pk)
@@ -105,11 +160,11 @@ def usuario_edit(request, pk):
         # Cambiar contraseña si se proporciona
         password = request.POST.get('password')
         if password:
-            usuario.password = password
+            usuario.password = make_password(password)
         
         usuario.save()
         
-        messages.success(request, 'Usuario actualizado correctamente')
+        messages.success(request, 'Usuario atualizado correctamente')
         return redirect('usuario_list')
     
     roles = Rol.objects.all()
@@ -117,7 +172,7 @@ def usuario_edit(request, pk):
     return render(request, 'accounts/usuario_form.html', context)
 
 
-@login_required
+@requerido_login
 def usuario_delete(request, pk):
     """Elimina un usuario"""
     usuario = get_object_or_404(Usuario, pk=pk)
@@ -133,7 +188,7 @@ def usuario_delete(request, pk):
 
 # ================= ROLES =================
 
-@login_required
+@requerido_login
 def rol_list(request):
     """Lista todos los roles"""
     rol_list = Rol.objects.all()
@@ -141,7 +196,7 @@ def rol_list(request):
     return render(request, 'accounts/rol_list.html', context)
 
 
-@login_required
+@requerido_login
 def rol_create(request):
     """Crea un nuevo rol"""
     if request.method == 'POST':
@@ -163,7 +218,7 @@ def rol_create(request):
     return render(request, 'accounts/rol_form.html')
 
 
-@login_required
+@requerido_login
 def rol_edit(request, pk):
     """Edita un rol"""
     rol = get_object_or_404(Rol, pk=pk)
@@ -173,14 +228,14 @@ def rol_edit(request, pk):
         rol.descripcion = request.POST.get('descripcion')
         rol.save()
         
-        messages.success(request, 'Rol actualizado correctamente')
+        messages.success(request, 'Rol atualizado correctamente')
         return redirect('rol_list')
     
     context = {'rol': rol}
     return render(request, 'accounts/rol_form.html', context)
 
 
-@login_required
+@requerido_login
 def rol_delete(request, pk):
     """Elimina un rol"""
     rol = get_object_or_404(Rol, pk=pk)
@@ -192,40 +247,3 @@ def rol_delete(request, pk):
     
     context = {'rol': rol}
     return render(request, 'accounts/rol_confirm_delete.html', context)
-
-
-# ================= AUTENTICACIÓN =================
-
-def login_view(request):
-    """Vista de inicio de sesión"""
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        try:
-            usuario = Usuario.objects.get(username=username)
-            
-            if usuario.password == password:
-                if usuario.estado == 'activo':
-                    # Iniciar sesión
-                    login(request, usuario)
-                    
-                    messages.success(request, f'Bienvenido {usuario.username}')
-                    return redirect('dashboard')
-                else:
-                    messages.error(request, 'Usuario inactivo')
-            else:
-                messages.error(request, 'Contraseña incorrecta')
-        except Usuario.DoesNotExist:
-            messages.error(request, 'Usuario no existe')
-        
-        return redirect('login')
-    
-    return render(request, 'accounts/login.html')
-
-
-def logout_view(request):
-    """Vista de cierre de sesión"""
-    logout(request)
-    messages.success(request, 'Sesión cerrada correctamente')
-    return redirect('login')

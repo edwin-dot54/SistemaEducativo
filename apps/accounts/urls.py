@@ -2,6 +2,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # ================= AUTENTICACIÓN =================
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    
     # ================= USUARIOS =================
     path('usuario/', views.usuario_list, name='usuario_list'),
     path('usuario/<int:pk>/', views.usuario_detail, name='usuario_detail'),
@@ -14,8 +19,4 @@ urlpatterns = [
     path('rol/create/', views.rol_create, name='rol_create'),
     path('rol/<int:pk>/edit/', views.rol_edit, name='rol_edit'),
     path('rol/<int:pk>/delete/', views.rol_delete, name='rol_delete'),
-    
-    # ================= LOGIN =================
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
 ]
