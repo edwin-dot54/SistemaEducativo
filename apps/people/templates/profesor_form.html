@@ -1,3 +1,95 @@
 {% extends 'base.html' %}
 
-{% block title %}{% if profesor %}Editar{% else %}Nuevo{% endif %} Profesor{%
+{% block title %}{% if profesor %}Editar{% else %}Nuevo{% endif %} Profesor{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-badge"></i> 
+                        {% if profesor %}Editar{% else %}Nuevo{% endif %} Profesor
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_nombre" class="form-label">Nombre</label>
+                                    <input type="text" 
+                                           name="nombre" 
+                                           class="form-control" 
+                                           id="id_nombre" 
+                                           value="{{ profesor.nombre|default:'' }}"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_apellido" class="form-label">Apellido</label>
+                                    <input type="text" 
+                                           name="apellido" 
+                                           class="form-control" 
+                                           id="id_apellido" 
+                                           value="{{ profesor.apellido|default:'' }}"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_especialidad" class="form-label">Especialidad</label>
+                            <input type="text" 
+                                   name="especialidad" 
+                                   class="form-control" 
+                                   id="id_especialidad" 
+                                   value="{{ profesor.especialidad|default:'' }}"
+                                   placeholder="Ej: Matemáticas, Física">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_correo" class="form-label">Correo Electrónico</label>
+                                    <input type="email" 
+                                           name="correo" 
+                                           class="form-control" 
+                                           id="id_correo" 
+                                           value="{{ profesor.correo|default:'' }}"
+                                           placeholder="correo@ejemplo.com"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_telefono" class="form-label">Teléfono</label>
+                                    <input type="text" 
+                                           name="telefono" 
+                                           class="form-control" 
+                                           id="id_telefono" 
+                                           value="{{ profesor.telefono|default:'' }}"
+                                           placeholder="Ej: 3001234567">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Guardar
+                            </button>
+                            <a href="{% url 'profesor_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
