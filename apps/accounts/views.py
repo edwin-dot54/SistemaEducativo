@@ -29,10 +29,10 @@ def login_view(request):
                     # Guardar usuario en sesión
                     request.session['usuario_id'] = usuario.id
                     request.session['username'] = usuario.username
-                    request.session['rol'] = usuario.id_rol.nombre_rol if usuario.id_rol else ''
+                    #request.session['rol'] = usuario.id_rol.nombre_rol if usuario.id_rol else ''
                     
                     messages.success(request, f'Bienvenido {usuario.username}')
-                    return redirect('usuario_list')
+                    return redirect('dashboard')
                 else:
                     messages.error(request, 'Usuario inactivo')
             else:
@@ -53,13 +53,14 @@ def logout_view(request):
 
 
 def requerido_login(view_func):
-    """Decorador para requerir login"""
+    """Decorador para requerir login (usa la sesión manual del proyecto)."""
     def wrapper(request, *args, **kwargs):
-        if 'usuario_id' not in request.session:
+        if not request.session.get('usuario_id'):
             messages.warning(request, 'Debe iniciar sesión')
             return redirect('login')
         return view_func(request, *args, **kwargs)
     return wrapper
+
 
 
 @requerido_login
