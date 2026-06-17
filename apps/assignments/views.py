@@ -42,7 +42,7 @@ def tarea_list(request):
     
     materias = Materia.objects.all()
     profesores = Profesor.objects.all()
-    context = {'page_obj': page_obj, 'materias': materies, 'profesores': professors}
+    context = {'page_obj': page_obj, 'materias': materias, 'profesores': profesores}
     return render(request, 'assignments/tarea_list.html', context)
 
 
