@@ -175,7 +175,7 @@ def materia_create(request):
     # Importación tardía para evitar errores circulares
     from apps.people.models import Profesor
     profesores = Profesor.objects.all()
-    context = {'degrees': grados, 'profesores': professors}
+    context = {'degrees': grados, 'profesores': profesores}
     return render(request, 'academic/materia_form.html', context)
 
 
@@ -198,7 +198,7 @@ def materia_edit(request, pk):
     grados = Grado.objects.all()
     from apps.people.models import Profesor
     profesores = Profesor.objects.all()
-    context = {'materia': materia, 'degrees': grados, 'profesores': professors}
+    context = {'materia': materia, 'degrees': grados, 'profesores': profesores}
     return render(request, 'academic/materia_form.html', context)
 
 
