@@ -52,6 +52,43 @@ def logout_view(request):
     return redirect('login')
 
 
+def registro_view(request):
+    """Crea un nuevo usuario (registro simple)."""
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        telefono = request.POST.get('telefono')
+        id_rol_id = request.POST.get('id_rol')
+
+        if not username or not password or not confirm_password:
+            messages.error(request, 'Completa todos los campos requeridos')
+            return redirect('registro')
+
+        if password != confirm_password:
+            messages.error(request, 'Las contraseñas no coinciden')
+            return redirect('registro')
+
+        if Usuario.objects.filter(username=username).exists():
+            messages.error(request, 'El nombre de usuario ya existe')
+            return redirect('registro')
+
+        usuario = Usuario.objects.create(
+            username=username,
+            password=make_password(password),
+            telefono=telefono or '',
+            estado='activo',
+            id_rol_id=id_rol_id if id_rol_id else None,
+        )
+
+        messages.success(request, f'Usuario creado: {usuario.username}')
+        return redirect('login')
+
+    roles = Rol.objects.all().order_by('nombre_rol')
+    return render(request, 'accounts/registro.html', {'roles': roles})
+
+
+
 def requerido_login(view_func):
     """Decorador para requerir login (usa la sesión manual del proyecto)."""
     def wrapper(request, *args, **kwargs):
