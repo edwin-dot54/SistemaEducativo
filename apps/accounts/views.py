@@ -99,6 +99,40 @@ def requerido_login(view_func):
     return wrapper
 
 
+def solo_ver_estudiante(view_func):
+    """Impide que el rol 'estudiante' modifique: bloquea POST y edición/borrado."""
+    def wrapper(request, *args, **kwargs):
+        usuario_id = request.session.get('usuario_id')
+        if not usuario_id:
+            return redirect('login')
+
+        try:
+            usuario = Usuario.objects.select_related('id_rol').get(id=usuario_id)
+        except Usuario.DoesNotExist:
+            request.session.flush()
+            return redirect('login')
+
+        rol_nombre = (usuario.id_rol.nombre_rol or '').lower() if usuario.id_rol else ''
+
+        if rol_nombre == 'estudiante':
+            # Para este proyecto, bloquear cualquier acción que modifique datos.
+            bloquear = (
+                request.method == 'POST'
+                or '/create/' in request.path
+                or '/edit/' in request.path
+                or '/delete/' in request.path
+                or request.path.endswith('/delete/')
+            )
+            if bloquear:
+                messages.warning(request, 'No tienes permisos para modificar. Solo puedes ver la información.')
+                return redirect('dashboard')
+
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+
+
 
 @requerido_login
 def dashboard(request):
@@ -149,8 +183,10 @@ def usuario_detail(request, pk):
     return render(request, 'accounts/usuario_detail.html', context)
 
 
+@solo_ver_estudiante
 @requerido_login
 def usuario_create(request):
+
     """Crea un nuevo usuario"""
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -184,8 +220,10 @@ def usuario_create(request):
     return render(request, 'accounts/usuario_form.html', context)
 
 
+@solo_ver_estudiante
 @requerido_login
 def usuario_edit(request, pk):
+
     """Edita un usuario existente"""
     usuario = get_object_or_404(Usuario, pk=pk)
     
@@ -210,8 +248,10 @@ def usuario_edit(request, pk):
     return render(request, 'accounts/usuario_form.html', context)
 
 
+@solo_ver_estudiante
 @requerido_login
 def usuario_delete(request, pk):
+
     """Elimina un usuario"""
     usuario = get_object_or_404(Usuario, pk=pk)
     
@@ -234,8 +274,10 @@ def rol_list(request):
     return render(request, 'accounts/rol_list.html', context)
 
 
+@solo_ver_estudiante
 @requerido_login
 def rol_create(request):
+
     """Crea un nuevo rol"""
     if request.method == 'POST':
         nombre_rol = request.POST.get('nombre_rol')
@@ -256,8 +298,10 @@ def rol_create(request):
     return render(request, 'accounts/rol_form.html')
 
 
+@solo_ver_estudiante
 @requerido_login
 def rol_edit(request, pk):
+
     """Edita un rol"""
     rol = get_object_or_404(Rol, pk=pk)
     
@@ -273,8 +317,10 @@ def rol_edit(request, pk):
     return render(request, 'accounts/rol_form.html', context)
 
 
+@solo_ver_estudiante
 @requerido_login
 def rol_delete(request, pk):
+
     """Elimina un rol"""
     rol = get_object_or_404(Rol, pk=pk)
     
