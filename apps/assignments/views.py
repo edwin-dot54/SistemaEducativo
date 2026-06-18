@@ -85,7 +85,7 @@ def tarea_create(request):
     
     materias = Materia.objects.all()
     profesores = Profesor.objects.all()
-    context = {'materias': materies, 'profesores': professors}
+    context = {'materias': materias, 'profesores': profesores}
     return render(request, 'assignments/tarea_form.html', context)
 
 
@@ -107,7 +107,7 @@ def tarea_edit(request, pk):
     
     materias = Materia.objects.all()
     profesores = Profesor.objects.all()
-    context = {'tarea': tarea, 'materias': materies, 'profesores': professors}
+    context = {'tarea': tarea, 'materias': materias, 'profesores': profesores}
     return render(request, 'assignments/tarea_form.html', context)
 
 
