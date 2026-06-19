@@ -10,7 +10,10 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Sum
 from .models import Pago
 from apps.people.models import Estudiante
-from apps.accounts.views import requerido_login
+from apps.accounts.views import requerido_login, estudiante_no_editable
+
+
+
 
 @requerido_login
 def pago_list(request):
@@ -65,6 +68,7 @@ def pago_detail(request, pk):
 
 
 @  requerido_login
+@estudiante_no_editable
 def pago_create(request):
     """Registra un nuevo pago"""
     if request.method == 'POST':
@@ -93,6 +97,7 @@ def pago_create(request):
 
 
 @requerido_login
+@estudiante_no_editable
 def pago_edit(request, pk):
     """Edita un pago"""
     pago = get_object_or_404(Pago, pk=pk)
@@ -115,6 +120,7 @@ def pago_edit(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def pago_delete(request, pk):
     """Elimina un pago"""
     pago = get_object_or_404(Pago, pk=pk)
@@ -129,6 +135,7 @@ def pago_delete(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def pago_registrar(request, pk):
     """Registra el pago de una deuda"""
     pago = get_object_or_404(Pago, pk=pk)

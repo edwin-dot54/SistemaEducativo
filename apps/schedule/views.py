@@ -10,7 +10,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Horario
 from apps.academic.models import Grado, Materia
-from apps.accounts.views import requerido_login
+from apps.accounts.views import requerido_login, estudiante_no_editable
+
 
 
 @requerido_login
@@ -61,6 +62,7 @@ def horario_detail(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def horario_create(request):
     """Crea un nuevo horario"""
     if request.method == 'POST':
@@ -99,6 +101,7 @@ def horario_create(request):
 
 
 @requerido_login
+@estudiante_no_editable
 def horario_edit(request, pk):
     """Edita un horario"""
     horario = get_object_or_404(Horario, pk=pk)
@@ -122,6 +125,7 @@ def horario_edit(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def horario_delete(request, pk):
     """Elimina un horario"""
     horario = get_object_or_404(Horario, pk=pk)

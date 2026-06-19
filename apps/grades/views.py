@@ -14,7 +14,8 @@ from django.contrib import messages
 from .models import Nota
 from apps.people.models import Estudiante
 from apps.academic.models import Materia
-from apps.accounts.views import requerido_login
+from apps.accounts.views import requerido_login, estudiante_no_editable
+
 
 @requerido_login
 def nota_list(request):
@@ -64,6 +65,7 @@ def nota_detail(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def nota_create(request):
     """Registra una nueva nota"""
     if request.method == 'POST':
@@ -100,6 +102,7 @@ def nota_create(request):
 
 
 @requerido_login
+@estudiante_no_editable
 def nota_edit(request, pk):
     """Edita una nota"""
     nota = get_object_or_404(Nota, pk=pk)
@@ -122,6 +125,7 @@ def nota_edit(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def nota_delete(request, pk):
     """Elimina una nota"""
     nota = get_object_or_404(Nota, pk=pk)

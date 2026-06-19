@@ -10,7 +10,10 @@ from django.db.models import Q
 from .models import Tarea
 from apps.academic.models import Materia
 from apps.people.models import Profesor
-from apps.accounts.views import requerido_login
+from apps.accounts.views import requerido_login, estudiante_no_editable
+
+
+
 
 
 # ================= TAREA =================
@@ -56,6 +59,7 @@ def tarea_detail(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def tarea_create(request):
     """Crea una nueva tarea"""
     if request.method == 'POST':
@@ -91,6 +95,7 @@ def tarea_create(request):
 
 
 @requerido_login
+@estudiante_no_editable
 def tarea_edit(request, pk):
     """Edita una tarea"""
     tarea = get_object_or_404(Tarea, pk=pk)
@@ -113,6 +118,7 @@ def tarea_edit(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def tarea_delete(request, pk):
     """Elimina una tarea"""
     tarea = get_object_or_404(Tarea, pk=pk)

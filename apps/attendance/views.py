@@ -10,7 +10,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Asistencia
 from apps.people.models import Estudiante
-from apps.accounts.views import requerido_login
+from apps.accounts.views import requerido_login, estudiante_no_editable
+
 
 
 @requerido_login
@@ -50,6 +51,7 @@ def asistencia_detail(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def asistencia_create(request):
     """Registra una nueva asistencia"""
     if request.method == 'POST':
@@ -79,6 +81,7 @@ def asistencia_create(request):
 
 
 @requerido_login
+@estudiante_no_editable
 def asistencia_edit(request, pk):
     """Edita una asistencia"""
     asistencia = get_object_or_404(Asistencia, pk=pk)
@@ -99,6 +102,7 @@ def asistencia_edit(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def asistencia_delete(request, pk):
     """Elimina una asistencia"""
     asistencia = get_object_or_404(Asistencia, pk=pk)
