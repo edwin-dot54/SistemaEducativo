@@ -11,7 +11,8 @@ from django.db.models import Q
 from .models import Estudiante, Profesor
 from apps.academic.models import Grado
 from django.contrib.auth import get_user_model
-from apps.accounts.views import requerido_login
+from apps.accounts.views import requerido_login, estudiante_no_editable
+
 
 User = get_user_model()
 
@@ -54,7 +55,9 @@ def estudiante_detail(request, pk):
     return render(request, 'people/estudiante_detail.html', context)
 
 
+from apps.accounts.views import estudiante_no_editable
 @requerido_login
+@estudiante_no_editable
 def estudiante_create(request):
     """Crea un nuevo estudiante"""
     if request.method == 'POST':
@@ -92,6 +95,7 @@ def estudiante_create(request):
 
 
 @requerido_login
+@estudiante_no_editable
 def estudiante_edit(request, pk):
     """Edita un estudiante"""
     estudiante = get_object_or_404(Estudiante, pk=pk)
@@ -117,6 +121,7 @@ def estudiante_edit(request, pk):
 
 
 @requerido_login
+@estudiante_no_editable
 def estudiante_delete(request, pk):
     """Elimina un estudiante"""
     estudiante = get_object_or_404(Estudiante, pk=pk)

@@ -4,7 +4,11 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Grado, Materia
-from apps.accounts.views import requerido_login
+from apps.accounts.views import requerido_login, estudiante_no_editable
+
+
+
+
 
 
 # ================= GRADOS =================

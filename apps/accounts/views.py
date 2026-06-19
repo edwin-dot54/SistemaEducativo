@@ -101,6 +101,32 @@ def requerido_login(view_func):
 
 
 
+
+def estudiante_no_editable(view_func):
+    """Bloquea crear/editar/eliminar para rol estudiante y permite solo ver."""
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('usuario_id'):
+            messages.warning(request, 'Debe iniciar sesión')
+            return redirect('login')
+
+        try:
+            usuario = Usuario.objects.select_related('id_rol').get(id=request.session['usuario_id'])
+            nombre_rol = (usuario.id_rol.nombre_rol if usuario.id_rol else '').strip().lower()
+        except Usuario.DoesNotExist:
+            nombre_rol = ''
+
+        if nombre_rol == 'estudiante':
+            messages.error(request, 'Solo puede ver. No tiene permisos para editar o eliminar.')
+            return redirect('dashboard')
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+
+
+
 @requerido_login
 def dashboard(request):
     """Dashboard principal"""
