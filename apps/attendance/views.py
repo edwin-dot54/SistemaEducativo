@@ -10,9 +10,10 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Asistencia
 from apps.people.models import Estudiante
+from apps.accounts.views import requerido_login
 
 
-@login_required
+@requerido_login
 def asistencia_list(request):
     """Lista todas las asistencia"""
     asistencia_list = Asistencia.objects.all().order_by('-fecha')
@@ -40,7 +41,7 @@ def asistencia_list(request):
     return render(request, 'attendance/asistencia_list.html', context)
 
 
-@login_required
+@requerido_login
 def asistencia_detail(request, pk):
     """Muestra el detalle de una asistencia"""
     asistencia = get_object_or_404(Asistencia, pk=pk)
@@ -48,7 +49,7 @@ def asistencia_detail(request, pk):
     return render(request, 'attendance/asistencia_detail.html', context)
 
 
-@login_required
+@requerido_login
 def asistencia_create(request):
     """Registra una nueva asistencia"""
     if request.method == 'POST':
@@ -77,7 +78,7 @@ def asistencia_create(request):
     return render(request, 'attendance/asistencia_form.html', context)
 
 
-@login_required
+@requerido_login
 def asistencia_edit(request, pk):
     """Edita una asistencia"""
     asistencia = get_object_or_404(Asistencia, pk=pk)
@@ -97,7 +98,7 @@ def asistencia_edit(request, pk):
     return render(request, 'attendance/asistencia_form.html', context)
 
 
-@login_required
+@requerido_login
 def asistencia_delete(request, pk):
     """Elimina una asistencia"""
     asistencia = get_object_or_404(Asistencia, pk=pk)
@@ -111,7 +112,7 @@ def asistencia_delete(request, pk):
     return render(request, 'attendance/asistencia_confirm_delete.html', context)
 
 
-@login_required
+@requerido_login
 def asistencia_fecha(request, fecha):
     """Lista asistencia por fecha específica"""
     asistencia_list = Asistencia.objects.filter(fecha=fecha).order_by('id_estudiante')

@@ -10,9 +10,9 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Sum
 from .models import Pago
 from apps.people.models import Estudiante
+from apps.accounts.views import requerido_login
 
-
-@login_required
+@requerido_login
 def pago_list(request):
     """Lista todos los pagos"""
     pago_list = Pago.objects.all().order_by('-id')
@@ -56,7 +56,7 @@ def pago_list(request):
     return render(request, 'payments/pago_list.html', context)
 
 
-@login_required
+@requerido_login
 def pago_detail(request, pk):
     """Muestra el detalle de un pago"""
     pago = get_object_or_404(Pago, pk=pk)
@@ -64,7 +64,7 @@ def pago_detail(request, pk):
     return render(request, 'payments/pago_detail.html', context)
 
 
-@login_required
+@  requerido_login
 def pago_create(request):
     """Registra un nuevo pago"""
     if request.method == 'POST':
@@ -92,7 +92,7 @@ def pago_create(request):
     return render(request, 'payments/pago_form.html', context)
 
 
-@login_required
+@requerido_login
 def pago_edit(request, pk):
     """Edita un pago"""
     pago = get_object_or_404(Pago, pk=pk)
@@ -114,7 +114,7 @@ def pago_edit(request, pk):
     return render(request, 'payments/pago_form.html', context)
 
 
-@login_required
+@requerido_login
 def pago_delete(request, pk):
     """Elimina un pago"""
     pago = get_object_or_404(Pago, pk=pk)
@@ -128,7 +128,7 @@ def pago_delete(request, pk):
     return render(request, 'payments/pago_confirm_delete.html', context)
 
 
-@login_required
+@requerido_login
 def pago_registrar(request, pk):
     """Registra el pago de una deuda"""
     pago = get_object_or_404(Pago, pk=pk)

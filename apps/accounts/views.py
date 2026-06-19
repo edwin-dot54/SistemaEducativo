@@ -12,6 +12,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import Rol, Usuario
 
 
+
 # ================= AUTENTICACIÓN =================
 
 def login_view(request):

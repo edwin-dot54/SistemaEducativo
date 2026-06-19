@@ -11,13 +11,14 @@ from django.db.models import Q
 from .models import Estudiante, Profesor
 from apps.academic.models import Grado
 from django.contrib.auth import get_user_model
+from apps.accounts.views import requerido_login
 
 User = get_user_model()
 
 
 # ================= ESTUDIANTE =================
 
-@login_required
+@requerido_login
 def estudiante_list(request):
     """Lista todos los estudiantes"""
     estudiante_list = Estudiante.objects.all().order_by('apellido', 'nombre')
@@ -45,7 +46,7 @@ def estudiante_list(request):
     return render(request, 'people/estudiante_list.html', context)
 
 
-@login_required
+@requerido_login
 def estudiante_detail(request, pk):
     """Muestra el detalle de un estudiante"""
     estudiante = get_object_or_404(Estudiante, pk=pk)
@@ -53,7 +54,7 @@ def estudiante_detail(request, pk):
     return render(request, 'people/estudiante_detail.html', context)
 
 
-@login_required
+@requerido_login
 def estudiante_create(request):
     """Crea un nuevo estudiante"""
     if request.method == 'POST':
@@ -90,7 +91,7 @@ def estudiante_create(request):
     return render(request, 'people/estudiante_form.html', context)
 
 
-@login_required
+@requerido_login
 def estudiante_edit(request, pk):
     """Edita un estudiante"""
     estudiante = get_object_or_404(Estudiante, pk=pk)
@@ -115,7 +116,7 @@ def estudiante_edit(request, pk):
     return render(request, 'people/estudiante_form.html', context)
 
 
-@login_required
+@requerido_login
 def estudiante_delete(request, pk):
     """Elimina un estudiante"""
     estudiante = get_object_or_404(Estudiante, pk=pk)
@@ -131,7 +132,7 @@ def estudiante_delete(request, pk):
 
 # ================= PROFESOR =================
 
-@login_required
+@requerido_login
 def profesor_list(request):
     """Lista todos los profesores"""
     profesor_list = Profesor.objects.all().order_by('apellido', 'nombre')
@@ -152,7 +153,7 @@ def profesor_list(request):
     return render(request, 'people/profesor_list.html', context)
 
 
-@login_required
+@requerido_login
 def profesor_detail(request, pk):
     """Muestra el detalle de un profesor"""
     profesor = get_object_or_404(Profesor, pk=pk)
@@ -160,7 +161,7 @@ def profesor_detail(request, pk):
     return render(request, 'people/profesor_detail.html', context)
 
 
-@login_required
+@requerido_login
 def profesor_create(request):
     """Crea un nuevo profesor"""
     if request.method == 'POST':
@@ -186,7 +187,7 @@ def profesor_create(request):
     return render(request, 'people/profesor_form.html', context)
 
 
-@login_required
+@requerido_login
 def profesor_edit(request, pk):
     """Edita un profesor"""
     profesor = get_object_or_404(Profesor, pk=pk)
@@ -207,7 +208,7 @@ def profesor_edit(request, pk):
     return render(request, 'people/profesor_form.html', context)
 
 
-@login_required
+@requerido_login
 def profesor_delete(request, pk):
     """Elimina un profesor"""
     profesor = get_object_or_404(Profesor, pk=pk)

@@ -4,11 +4,12 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Grado, Materia
+from apps.accounts.views import requerido_login
 
 
 # ================= GRADOS =================
 
-@login_required
+@requerido_login
 def grado_list(request):
     """Lista todos los grados"""
     grado_list = Grado.objects.all().order_by('nivel', 'nombre_grado')
@@ -36,7 +37,7 @@ def grado_list(request):
     return render(request, 'academic/grado_list.html', context)
 
 
-@login_required
+@requerido_login
 def grado_detail(request, pk):
     """Muestra el detalle de un grado y sus materias"""
     grado = get_object_or_404(Grado, pk=pk)
@@ -45,7 +46,7 @@ def grado_detail(request, pk):
     return render(request, 'academic/grado_detail.html', context)
 
 
-@login_required
+@requerido_login
 def grado_create(request):
     """Crea un nuevo grado"""
     if request.method == 'POST':
@@ -74,7 +75,7 @@ def grado_create(request):
     return render(request, 'academic/grado_form.html')
 
 
-@login_required
+@requerido_login
 def grado_edit(request, pk):
     """Edita un grado existente"""
     grado = get_object_or_404(Grado, pk=pk)
@@ -92,7 +93,7 @@ def grado_edit(request, pk):
     return render(request, 'academic/grado_form.html', context)
 
 
-@login_required
+@requerido_login
 def grado_delete(request, pk):
     """Elimina un grado"""
     grado = get_object_or_404(Grado, pk=pk)
@@ -108,7 +109,7 @@ def grado_delete(request, pk):
 
 # ================= MATERIAS =================
 
-@login_required
+@requerido_login
 def materia_list(request):
     """Lista todas las materias"""
     materia_list = Materia.objects.all().order_by('nombre_materia')
@@ -137,7 +138,7 @@ def materia_list(request):
     return render(request, 'academic/materia_list.html', context)
 
 
-@login_required
+@requerido_login
 def materia_detail(request, pk):
     """Muestra el detalle de una materia"""
     materia = get_object_or_404(Materia, pk=pk)
@@ -145,7 +146,7 @@ def materia_detail(request, pk):
     return render(request, 'academic/materia_detail.html', context)
 
 
-@login_required
+@requerido_login
 def materia_create(request):
     """Crea una nueva materia"""
     if request.method == 'POST':
@@ -175,11 +176,11 @@ def materia_create(request):
     # Importación tardía para evitar errores circulares
     from apps.people.models import Profesor
     profesores = Profesor.objects.all()
-    context = {'degrees': grados, 'profesores': professors}
+    context = {'degrees': grados, 'profesores': profesores}
     return render(request, 'academic/materia_form.html', context)
 
 
-@login_required
+@requerido_login
 def materia_edit(request, pk):
     """Edita una materia existente"""
     materia = get_object_or_404(Materia, pk=pk)
@@ -198,11 +199,11 @@ def materia_edit(request, pk):
     grados = Grado.objects.all()
     from apps.people.models import Profesor
     profesores = Profesor.objects.all()
-    context = {'materia': materia, 'degrees': grados, 'profesores': professors}
+    context = {'materia': materia, 'degrees': grados, 'profesores': profesores}
     return render(request, 'academic/materia_form.html', context)
 
 
-@login_required
+@requerido_login
 def materia_delete(request, pk):
     """Elimina una materia"""
     materia = get_object_or_404(Materia, pk=pk)
