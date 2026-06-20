@@ -124,6 +124,49 @@ def estudiante_no_editable(view_func):
     return wrapper
 
 
+def profesor_permitir_solo_notas_y_estudiantes(view_func):
+    """Permite al profesor solo consultar/gestionar notas y ver la info básica de estudiantes.
+    Bloquea acceso del profesor a CRUD administrativos del resto del sistema.
+    """
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('usuario_id'):
+            messages.warning(request, 'Debe iniciar sesión')
+            return redirect('login')
+
+        try:
+            usuario = Usuario.objects.select_related('id_rol').get(id=request.session['usuario_id'])
+            nombre_rol = (usuario.id_rol.nombre_rol if usuario.id_rol else '').strip().lower()
+        except Usuario.DoesNotExist:
+            nombre_rol = ''
+
+        # Si no es profesor, deja que el flujo actual maneje permisos.
+        if nombre_rol != 'profesor':
+            return view_func(request, *args, **kwargs)
+
+        allowed = {
+
+            # people (estudiantes)
+            'estudiante_list',
+            'estudiante_detail',
+            # grades (notas)
+            'nota_list',
+            'nota_detail',
+            'nota_create',
+            'nota_edit',
+            'nota_delete',
+        }
+
+        current_name = getattr(request.resolver_match, 'url_name', None)
+        if current_name not in allowed:
+            messages.error(request, 'Acceso restringido: el profesor solo puede ver estudiantes y gestionar notas.')
+            return redirect('dashboard')
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+
 
 
 

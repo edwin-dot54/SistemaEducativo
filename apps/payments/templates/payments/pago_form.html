@@ -4,6 +4,7 @@
 
 {% block content %}
 <div class="container">
+
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
@@ -52,16 +53,25 @@
                                    required>
                         </div>
                         
-                        {% if pago %}
+                        <div class="mb-3">
+                            <label for="id_metodo_pago" class="form-label">Método de Pago</label>
+                            <select name="metodo_pago" class="form-select" id="id_metodo_pago" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="efectivo" {% if pago and pago.metodo_pago == 'efectivo' %}selected{% endif %}>Efectivo</option>
+                                <option value="transferencia" {% if pago and pago.metodo_pago == 'transferencia' %}selected{% endif %}>Transferencia</option>
+                                <option value="tarjeta" {% if pago and pago.metodo_pago == 'tarjeta' %}selected{% endif %}>Tarjeta</option>
+                            </select>
+                        </div>
+
                         <div class="mb-3">
                             <label for="id_estado" class="form-label">Estado</label>
                             <select name="estado" class="form-select" id="id_estado" required>
-                                <option value="pagado" {% if pago.estado == 'pagado' %}selected{% endif %}>Pagado</option>
-                                <option value="pendiente" {% if pago.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
-                                <option value="atrasado" {% if pago.estado == 'atrasado' %}selected{% endif %}>Atrasado</option>
+                                <option value="pagado" {% if pago and pago.estado == 'pagado' %}selected{% endif %}>Pagado</option>
+                                <option value="pendiente" {% if pago and pago.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                                <option value="atrasado" {% if pago and pago.estado == 'atrasado' %}selected{% endif %}>Atrasado</option>
                             </select>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="id_fecha_pago" class="form-label">Fecha de Pago</label>
                             <input type="date" 
@@ -70,17 +80,6 @@
                                    id="id_fecha_pago" 
                                    value="{{ pago.fecha_pago|default:'' }}">
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="id_metodo_pago" class="form-label">Método de Pago</label>
-                            <select name="metodo_pago" class="form-select" id="id_metodo_pago">
-                                <option value="">Seleccionar...</option>
-                                <option value="efectivo" {% if pago.metodo_pago == 'efectivo' %}selected{% endif %}>Efectivo</option>
-                                <option value="transferencia" {% if pago.metodo_pago == 'transferencia' %}selected{% endif %}>Transferencia</option>
-                                <option value="tarjeta" {% if pago.metodo_pago == 'tarjeta' %}selected{% endif %}>Tarjeta</option>
-                            </select>
-                        </div>
-                        {% endif %}
                         
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
@@ -96,5 +95,4 @@
         </div>
     </div>
 </div>
-
-    
+{%endblock%}

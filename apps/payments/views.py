@@ -67,8 +67,7 @@ def pago_detail(request, pk):
     return render(request, 'payments/pago_detail.html', context)
 
 
-@  requerido_login
-@estudiante_no_editable
+@requerido_login
 def pago_create(request):
     """Registra un nuevo pago"""
     if request.method == 'POST':
@@ -78,7 +77,10 @@ def pago_create(request):
         fecha_pago = request.POST.get('fecha_pago')
         metodo_pago = request.POST.get('metodo_pago')
         estado = request.POST.get('estado', 'pendiente')
-        
+
+        if not metodo_pago:
+            metodo_pago = 'efectivo'
+
         Pago.objects.create(
             id_estudiante_id=id_estudiante_id,
             concepto=concepto,
@@ -141,14 +143,15 @@ def pago_registrar(request, pk):
     pago = get_object_or_404(Pago, pk=pk)
     
     if request.method == 'POST':
-        from django.utils import timezone
         pago.fecha_pago = request.POST.get('fecha_pago')
         pago.metodo_pago = request.POST.get('metodo_pago')
         pago.estado = 'pagado'
         pago.save()
-        
+
         messages.success(request, 'Pago registrado correctamente')
         return redirect('pago_list')
-    
+
     context = {'pago': pago}
-    return render(request, 'payments/pago_registrar.html', context)
+    # Reutilizamos el formulario de edición para evitar la falta de template específico.
+    return render(request, 'payments/pago_form.html', context)
+

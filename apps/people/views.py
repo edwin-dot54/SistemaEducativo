@@ -3,6 +3,7 @@ Vistas de la aplicación people
 Gestiona estudiantes y profesores
 """
 
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -11,7 +12,8 @@ from django.db.models import Q
 from .models import Estudiante, Profesor
 from apps.academic.models import Grado
 from django.contrib.auth import get_user_model
-from apps.accounts.views import requerido_login, estudiante_no_editable
+from apps.accounts.views import requerido_login, estudiante_no_editable, profesor_permitir_solo_notas_y_estudiantes
+
 
 
 User = get_user_model()
@@ -20,8 +22,11 @@ User = get_user_model()
 # ================= ESTUDIANTE =================
 
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def estudiante_list(request):
+
     """Lista todos los estudiantes"""
+
     estudiante_list = Estudiante.objects.all().order_by('apellido', 'nombre')
     
     # Filtros
@@ -48,8 +53,10 @@ def estudiante_list(request):
 
 
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def estudiante_detail(request, pk):
     """Muestra el detalle de un estudiante"""
+
     estudiante = get_object_or_404(Estudiante, pk=pk)
     context = {'estudiante': estudiante}
     return render(request, 'people/estudiante_detail.html', context)
@@ -57,8 +64,11 @@ def estudiante_detail(request, pk):
 
 from apps.accounts.views import estudiante_no_editable
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 @estudiante_no_editable
 def estudiante_create(request):
+
+
     """Crea un nuevo estudiante"""
     if request.method == 'POST':
         codigo_estudiante = request.POST.get('codigo_estudiante')
@@ -90,13 +100,17 @@ def estudiante_create(request):
     
     grados = Grado.objects.all()
     usuarios = User.objects.filter(is_active=True)
-    context = {'grades': grados, 'usuarios': Usuarios}
+    context = {'grados': grados, 'usuarios': usuarios, 'estudiante': None}
+
     return render(request, 'people/estudiante_form.html', context)
+
 
 
 @requerido_login
 @estudiante_no_editable
+@profesor_permitir_solo_notas_y_estudiantes
 def estudiante_edit(request, pk):
+
     """Edita un estudiante"""
     estudiante = get_object_or_404(Estudiante, pk=pk)
     
@@ -116,13 +130,16 @@ def estudiante_edit(request, pk):
     
     grados = Grado.objects.all()
     usuarios = User.objects.filter(is_active=True)
-    context = {'estudiante': estudiante, 'grades': grados, 'usuarios': usuarios}
+    context = {'estudiante': estudiante, 'grados': grados, 'usuarios': usuarios}
+
     return render(request, 'people/estudiante_form.html', context)
 
 
 @requerido_login
 @estudiante_no_editable
+@profesor_permitir_solo_notas_y_estudiantes
 def estudiante_delete(request, pk):
+
     """Elimina un estudiante"""
     estudiante = get_object_or_404(Estudiante, pk=pk)
     
@@ -137,10 +154,15 @@ def estudiante_delete(request, pk):
 
 # ================= PROFESOR =================
 
+from apps.accounts.views import profesor_permitir_solo_notas_y_estudiantes
+
+
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def profesor_list(request):
-    """Lista todos los profesores"""
+    """ Lista todos los profesores"""
     profesor_list = Profesor.objects.all().order_by('apellido', 'nombre')
+
     
     buscar = request.GET.get('buscar')
     if buscar:
@@ -159,16 +181,20 @@ def profesor_list(request):
 
 
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def profesor_detail(request, pk):
     """Muestra el detalle de un profesor"""
+
     profesor = get_object_or_404(Profesor, pk=pk)
     context = {'profesor': profesor}
     return render(request, 'people/profesor_detail.html', context)
 
 
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def profesor_create(request):
     """Crea un nuevo profesor"""
+
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         apellido = request.POST.get('apellido')
@@ -193,8 +219,10 @@ def profesor_create(request):
 
 
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def profesor_edit(request, pk):
     """Edita un profesor"""
+
     profesor = get_object_or_404(Profesor, pk=pk)
     
     if request.method == 'POST':
@@ -214,8 +242,10 @@ def profesor_edit(request, pk):
 
 @estudiante_no_editable
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def profesor_delete(request, pk):
     """Elimina un profesor"""
+
     profesor = get_object_or_404(Profesor, pk=pk)
     
     if request.method == 'POST':

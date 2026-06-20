@@ -14,11 +14,14 @@ from django.contrib import messages
 from .models import Nota
 from apps.people.models import Estudiante
 from apps.academic.models import Materia
-from apps.accounts.views import requerido_login, estudiante_no_editable
+from apps.accounts.views import requerido_login, estudiante_no_editable, profesor_permitir_solo_notas_y_estudiantes
+
 
 
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_list(request):
+
     """Lista todas las notas"""
     nota_list = Nota.objects.all().order_by('-fecha_registro')
     
@@ -57,7 +60,9 @@ def nota_list(request):
 
 
 @requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_detail(request, pk):
+
     """Muestra el detalle de una nota"""
     nota = get_object_or_404(Nota, pk=pk)
     context = {'nota': nota}
@@ -66,7 +71,9 @@ def nota_detail(request, pk):
 
 @requerido_login
 @estudiante_no_editable
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_create(request):
+
     """Registra una nueva nota"""
     if request.method == 'POST':
         id_estudiante_id = request.POST.get('id_estudiante')
@@ -103,7 +110,9 @@ def nota_create(request):
 
 @requerido_login
 @estudiante_no_editable
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_edit(request, pk):
+
     """Edita una nota"""
     nota = get_object_or_404(Nota, pk=pk)
     
@@ -126,7 +135,9 @@ def nota_edit(request, pk):
 
 @requerido_login
 @estudiante_no_editable
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_delete(request, pk):
+
     """Elimina una nota"""
     nota = get_object_or_404(Nota, pk=pk)
     
