@@ -116,7 +116,7 @@ def estudiante_no_editable(view_func):
             nombre_rol = ''
 
         if nombre_rol == 'estudiante':
-            messages.error(request, 'Solo puede ver. No tiene permisos para editar o eliminar.')
+            messages.error(request, 'Solo puede ver. No tiene permisos para crear, editar o eliminar.')
             return redirect('dashboard')
 
         return view_func(request, *args, **kwargs)
@@ -167,7 +167,7 @@ def usuario_list(request):
     context = {'page_obj': page_obj, 'roles': roles}
     return render(request, 'accounts/usuario_list.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def usuario_detail(request, pk):
     """Muestra el detalle de un usuario"""
@@ -175,7 +175,7 @@ def usuario_detail(request, pk):
     context = {'usuario': usuario}
     return render(request, 'accounts/usuario_detail.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def usuario_create(request):
     """Crea un nuevo usuario"""
@@ -210,7 +210,7 @@ def usuario_create(request):
     context = {'roles': roles}
     return render(request, 'accounts/usuario_form.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def usuario_edit(request, pk):
     """Edita un usuario existente"""
@@ -236,7 +236,7 @@ def usuario_edit(request, pk):
     context = {'usuario': usuario, 'roles': roles}
     return render(request, 'accounts/usuario_form.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def usuario_delete(request, pk):
     """Elimina un usuario"""
@@ -252,7 +252,7 @@ def usuario_delete(request, pk):
 
 
 # ================= ROLES =================
-
+@estudiante_no_editable
 @requerido_login
 def rol_list(request):
     """Lista todos los roles"""
@@ -260,7 +260,7 @@ def rol_list(request):
     context = {'roles': rol_list}
     return render(request, 'accounts/rol_list.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def rol_create(request):
     """Crea un nuevo rol"""
@@ -282,7 +282,7 @@ def rol_create(request):
     
     return render(request, 'accounts/rol_form.html')
 
-
+@estudiante_no_editable
 @requerido_login
 def rol_edit(request, pk):
     """Edita un rol"""
@@ -299,7 +299,7 @@ def rol_edit(request, pk):
     context = {'rol': rol}
     return render(request, 'accounts/rol_form.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def rol_delete(request, pk):
     """Elimina un rol"""

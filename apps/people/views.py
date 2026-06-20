@@ -212,7 +212,7 @@ def profesor_edit(request, pk):
     context = {'profesor': profesor, 'usuarios': usuarios}
     return render(request, 'people/profesor_form.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def profesor_delete(request, pk):
     """Elimina un profesor"""
