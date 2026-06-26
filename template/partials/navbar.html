@@ -1,3 +1,4 @@
+
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
   <div class="container">
@@ -15,16 +16,41 @@
           <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-house-door"></i> Inicio</a>
         </li>
 
+        {# El rol se lee desde la sesión. No existe, se asume estudiante. #}
+        {% with rol=request.session.usuario_rol|default:'estudiante' %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="appsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-grid"></i> Módulos
           </a>
+
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="appsDropdown">
-            <li><a class="dropdown-item" href="{% url 'horario_list' %}">Horario</a></li>
-            <li><a class="dropdown-item" href="{% url 'asistencia_list' %}">Asistencia</a></li>
-            <li><a class="dropdown-item" href="{% url 'nota_list' %}">Calificaciones</a></li>
+            {# Mostrar según rol en sesión (profesor: calificaciones editable + materias + asistencia editable) #}
+            {% if rol|lower == 'profesor' %}
+              <li><a class="dropdown-item" href="{% url 'materia_list' %}">Materias</a></li>
+              <li><a class="dropdown-item" href="{% url 'estudiante_list' %}">Estudiantes</a></li>
+              <li><a class="dropdown-item" href="{% url 'asistencia_list' %}">Asistencia</a></li>
+              <li><a class="dropdown-item" href="{% url 'nota_list' %}">Calificaciones</a></li>
+            {% elif rol|lower == 'administrador' %}
+              <li><a class="dropdown-item" href="{% url 'grado_list' %}">Grado</a></li>
+              <li><a class="dropdown-item" href="{% url 'materia_list' %}">Materias</a></li>
+              <li><a class="dropdown-item" href="{% url 'profesor_list' %}">Profesores</a></li>
+              <li><a class="dropdown-item" href="{% url 'estudiante_list' %}">Estudiantes</a></li>
+              <li><a class="dropdown-item" href="{% url 'horario_list' %}">Horario</a></li>
+              <li><a class="dropdown-item" href="{% url 'asistencia_list' %}">Asistencia</a></li>
+              <li><a class="dropdown-item" href="{% url 'nota_list' %}">Calificaciones</a></li>
+              <li><a class="dropdown-item" href="{% url 'tarea_list' %}">Tareas</a></li>
+              <li><a class="dropdown-item" href="{% url 'pago_list' %}">Pagos</a></li>
+              <li><a class="dropdown-item" href="{% url 'usuario_list' %}">Usuarios</a></li>
+              <li><a class="dropdown-item" href="{% url 'rol_list' %}">Roles</a></li>
+            {% else %}
+              <li><a class="dropdown-item" href="{% url 'horario_list' %}">Horario</a></li>
+              <li><a class="dropdown-item" href="{% url 'asistencia_list' %}">Asistencia</a></li>
+              <li><a class="dropdown-item" href="{% url 'nota_list' %}">Calificaciones</a></li>
+            {% endif %}
+
           </ul>
         </li>
+        {% endwith %}
 
         <li class="nav-item">
           <a class="btn btn-outline-light ms-lg-3" href="{% url 'logout' %}">
@@ -35,5 +61,4 @@
     </div>
   </div>
 </nav>
-
 

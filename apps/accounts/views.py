@@ -30,7 +30,8 @@ def login_view(request):
                     # Guardar usuario en sesión
                     request.session['usuario_id'] = usuario.id
                     request.session['username'] = usuario.username
-                    #request.session['rol'] = usuario.id_rol.nombre_rol if usuario.id_rol else ''
+                    request.session['usuario_rol'] = (usuario.id_rol.nombre_rol if usuario.id_rol else '').strip().lower()
+
                     
                     messages.success(request, f'Bienvenido {usuario.username}')
                     return redirect('dashboard')
