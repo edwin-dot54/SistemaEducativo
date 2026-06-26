@@ -143,13 +143,14 @@ def pago_registrar(request, pk):
     pago = get_object_or_404(Pago, pk=pk)
     
     if request.method == 'POST':
-        pago.fecha_pago = request.POST.get('fecha_pago')
-        pago.metodo_pago = request.POST.get('metodo_pago')
+        pago.fecha_pago = request.POST.get('fecha_pago') or None
+        pago.metodo_pago = request.POST.get('metodo_pago') or ''
         pago.estado = 'pagado'
         pago.save()
 
         messages.success(request, 'Pago registrado correctamente')
         return redirect('pago_list')
+
 
     context = {'pago': pago}
     # Reutilizamos el formulario de edición para evitar la falta de template específico.
