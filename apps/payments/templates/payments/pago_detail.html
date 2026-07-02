@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Pago #{{ pago.id }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        h1 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .info-group { margin-bottom: 15px; }
+        .label { font-weight: bold; color: #666; }
+        .value { color: #111; font-size: 1.1em; }
+        .back-btn { display: inline-block; margin-top: 20px; padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .back-btn:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Detalle de Pago</h1>
+        
+        <div class="info-group">
+            <span class="label">ID del Pago:</span>
+            <div class="value">#{{ pago.pk }}</div>
+        </div>
+
+        <div class="info-group">
+            <span class="label">Monto:</span>
+            <div class="value">${{ pago.monto }}</div> 
+        </div>
+
+        <div class="info-group">
+            <span class="label">Fecha:</span>
+            <div class="value">{{ pago.fecha|date:"d/m/Y H:i" }}</div>
+        </div>
+
+        <div class="info-group">
+            <span class="label">Estado:</span>
+            <div class="value">{{ pago.estado }}</div>
+        </div>
+
+        <a href="#" onclick="window.history.back();" class="back-btn">Volver</a>
+    </div>
+
+</body>
+{% endblock content %}

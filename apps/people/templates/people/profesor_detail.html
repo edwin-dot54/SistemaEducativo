@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<body class="bg-light">
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                
+                <div class="card shadow-sm border-0">
+                    
+                    <div class="card-header bg-dark text-white p-4">
+                        <div class="text-uppercase tracking-wider small text-muted text-light mb-1" style="letter-spacing: 1px;">
+                            Perfil del Profesor
+                        </div>
+                        <h1 class="h3 mb-0">{{ profesor.nombre }} {{ profesor.apellido }}</h1>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <ul class="list-group list-group-flush">
+                            
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                <span class="fw-bold text-secondary">ID / Código</span>
+                                <span class="badge bg-secondary rounded-pill">#{{ profesor.pk }}</span>
+                            </li>
+                            
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                <span class="fw-bold text-secondary">Correo Electrónico</span>
+                                <span class="text-dark">{{ profesor.email|default:"No registrado" }}</span>
+                            </li>
+                            
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                <span class="fw-bold text-secondary">Especialidad</span>
+                                <span class="text-dark fw-medium">{{ profesor.especialidad|default:"No especificada" }}</span>
+                            </li>
+                            
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                <span class="fw-bold text-secondary">Fecha de Registro</span>
+                                <span class="text-dark">{{ profesor.fecha_creacion|date:"d/m/Y" }}</span>
+                            </li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                        <a href="#" onclick="window.history.back();" class="btn btn-outline-dark w-100">
+                            Volver al listado
+                        </a>
+                    </div>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+{% endblock content %}

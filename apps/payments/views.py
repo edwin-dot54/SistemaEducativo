@@ -4,7 +4,6 @@ Gestiona los pagos de estudiantes
 """
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
@@ -12,9 +11,7 @@ from .models import Pago
 from apps.people.models import Estudiante
 from apps.accounts.views import requerido_login, estudiante_no_editable
 
-
-
-
+  
 @requerido_login
 def pago_list(request):
     """Lista todos los pagos"""
