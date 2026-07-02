@@ -4,15 +4,15 @@ Gestiona los pagos de estudiantes
 """
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
 from .models import Pago
 from apps.people.models import Estudiante
+from apps.accounts.views import requerido_login, estudiante_no_editable
 
-
-@login_required
+  
+@requerido_login
 def pago_list(request):
     """Lista todos los pagos"""
     pago_list = Pago.objects.all().order_by('-id')
@@ -56,7 +56,7 @@ def pago_list(request):
     return render(request, 'payments/pago_list.html', context)
 
 
-@login_required
+@requerido_login
 def pago_detail(request, pk):
     """Muestra el detalle de un pago"""
     pago = get_object_or_404(Pago, pk=pk)
@@ -64,7 +64,7 @@ def pago_detail(request, pk):
     return render(request, 'payments/pago_detail.html', context)
 
 
-@login_required
+@requerido_login
 def pago_create(request):
     """Registra un nuevo pago"""
     if request.method == 'POST':
@@ -74,7 +74,10 @@ def pago_create(request):
         fecha_pago = request.POST.get('fecha_pago')
         metodo_pago = request.POST.get('metodo_pago')
         estado = request.POST.get('estado', 'pendiente')
-        
+
+        if not metodo_pago:
+            metodo_pago = 'efectivo'
+
         Pago.objects.create(
             id_estudiante_id=id_estudiante_id,
             concepto=concepto,
@@ -92,7 +95,8 @@ def pago_create(request):
     return render(request, 'payments/pago_form.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
 def pago_edit(request, pk):
     """Edita un pago"""
     pago = get_object_or_404(Pago, pk=pk)
@@ -114,7 +118,8 @@ def pago_edit(request, pk):
     return render(request, 'payments/pago_form.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
 def pago_delete(request, pk):
     """Elimina un pago"""
     pago = get_object_or_404(Pago, pk=pk)
@@ -128,20 +133,23 @@ def pago_delete(request, pk):
     return render(request, 'payments/pago_confirm_delete.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
 def pago_registrar(request, pk):
     """Registra el pago de una deuda"""
     pago = get_object_or_404(Pago, pk=pk)
     
     if request.method == 'POST':
-        from django.utils import timezone
-        pago.fecha_pago = request.POST.get('fecha_pago')
-        pago.metodo_pago = request.POST.get('metodo_pago')
+        pago.fecha_pago = request.POST.get('fecha_pago') or None
+        pago.metodo_pago = request.POST.get('metodo_pago') or ''
         pago.estado = 'pagado'
         pago.save()
-        
+
         messages.success(request, 'Pago registrado correctamente')
         return redirect('pago_list')
-    
+
+
     context = {'pago': pago}
-    return render(request, 'payments/pago_registrar.html', context)
+    # Reutilizamos el formulario de edición para evitar la falta de template específico.
+    return render(request, 'payments/pago_form.html', context)
+

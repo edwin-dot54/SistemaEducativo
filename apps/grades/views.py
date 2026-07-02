@@ -14,10 +14,14 @@ from django.contrib import messages
 from .models import Nota
 from apps.people.models import Estudiante
 from apps.academic.models import Materia
+from apps.accounts.views import requerido_login, estudiante_no_editable, profesor_permitir_solo_notas_y_estudiantes
 
 
-@login_required
+
+@requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_list(request):
+
     """Lista todas las notas"""
     nota_list = Nota.objects.all().order_by('-fecha_registro')
     
@@ -55,16 +59,21 @@ def nota_list(request):
     return render(request, 'grades/nota_list.html', context)
 
 
-@login_required
+@requerido_login
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_detail(request, pk):
+
     """Muestra el detalle de una nota"""
     nota = get_object_or_404(Nota, pk=pk)
     context = {'nota': nota}
     return render(request, 'grades/nota_detail.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_create(request):
+
     """Registra una nueva nota"""
     if request.method == 'POST':
         id_estudiante_id = request.POST.get('id_estudiante')
@@ -99,8 +108,11 @@ def nota_create(request):
     return render(request, 'grades/nota_form.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_edit(request, pk):
+
     """Edita una nota"""
     nota = get_object_or_404(Nota, pk=pk)
     
@@ -121,8 +133,11 @@ def nota_edit(request, pk):
     return render(request, 'grades/nota_form.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
+@profesor_permitir_solo_notas_y_estudiantes
 def nota_delete(request, pk):
+
     """Elimina una nota"""
     nota = get_object_or_404(Nota, pk=pk)
     

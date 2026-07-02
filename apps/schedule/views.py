@@ -10,9 +10,11 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Horario
 from apps.academic.models import Grado, Materia
+from apps.accounts.views import requerido_login, estudiante_no_editable
 
 
-@login_required
+
+@requerido_login
 def horario_list(request):
     """Lista todos los horarios"""
     horario_list = Horario.objects.all().order_by('id_grado', 'dia_semana', 'hora_inicio')
@@ -51,7 +53,7 @@ def horario_list(request):
     return render(request, 'schedule/horario_list.html', context)
 
 
-@login_required
+@requerido_login
 def horario_detail(request, pk):
     """Muestra el detalle de un horario"""
     horario = get_object_or_404(Horario, pk=pk)
@@ -59,7 +61,8 @@ def horario_detail(request, pk):
     return render(request, 'schedule/horario_detail.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
 def horario_create(request):
     """Crea un nuevo horario"""
     if request.method == 'POST':
@@ -97,7 +100,8 @@ def horario_create(request):
     return render(request, 'schedule/horario_form.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
 def horario_edit(request, pk):
     """Edita un horario"""
     horario = get_object_or_404(Horario, pk=pk)
@@ -120,7 +124,8 @@ def horario_edit(request, pk):
     return render(request, 'schedule/horario_form.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
 def horario_delete(request, pk):
     """Elimina un horario"""
     horario = get_object_or_404(Horario, pk=pk)
@@ -134,7 +139,7 @@ def horario_delete(request, pk):
     return render(request, 'schedule/horario_confirm_delete.html', context)
 
 
-@login_required
+@requerido_login
 def horario_por_grado(request, pk):
     """Muestra el horario de un grado específico"""
     grado = get_object_or_404(Grado, pk=pk)

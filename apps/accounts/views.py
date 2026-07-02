@@ -12,6 +12,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import Rol, Usuario
 
 
+
 # ================= AUTENTICACIÓN =================
 
 def login_view(request):
@@ -29,7 +30,8 @@ def login_view(request):
                     # Guardar usuario en sesión
                     request.session['usuario_id'] = usuario.id
                     request.session['username'] = usuario.username
-                    #request.session['rol'] = usuario.id_rol.nombre_rol if usuario.id_rol else ''
+                    request.session['usuario_rol'] = (usuario.id_rol.nombre_rol if usuario.id_rol else '').strip().lower()
+
                     
                     messages.success(request, f'Bienvenido {usuario.username}')
                     return redirect('dashboard')
@@ -100,6 +102,75 @@ def requerido_login(view_func):
 
 
 
+
+def estudiante_no_editable(view_func):
+    """Bloquea crear/editar/eliminar para rol estudiante y permite solo ver."""
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('usuario_id'):
+            messages.warning(request, 'Debe iniciar sesión')
+            return redirect('login')
+
+        try:
+            usuario = Usuario.objects.select_related('id_rol').get(id=request.session['usuario_id'])
+            nombre_rol = (usuario.id_rol.nombre_rol if usuario.id_rol else '').strip().lower()
+        except Usuario.DoesNotExist:
+            nombre_rol = ''
+
+        if nombre_rol == 'estudiante':
+            messages.error(request, 'Solo puede ver. No tiene permisos para crear, editar o eliminar.')
+            return redirect('dashboard')
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+def profesor_permitir_solo_notas_y_estudiantes(view_func):
+    """Permite al profesor solo consultar/gestionar notas y ver la info básica de estudiantes.
+    Bloquea acceso del profesor a CRUD administrativos del resto del sistema.
+    """
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('usuario_id'):
+            messages.warning(request, 'Debe iniciar sesión')
+            return redirect('login')
+
+        try:
+            usuario = Usuario.objects.select_related('id_rol').get(id=request.session['usuario_id'])
+            nombre_rol = (usuario.id_rol.nombre_rol if usuario.id_rol else '').strip().lower()
+        except Usuario.DoesNotExist:
+            nombre_rol = ''
+
+        # Si no es profesor, deja que el flujo actual maneje permisos.
+        if nombre_rol != 'profesor':
+            return view_func(request, *args, **kwargs)
+
+        allowed = {
+
+            # people (estudiantes)
+            'estudiante_list',
+            'estudiante_detail',
+            # grades (notas)
+            'nota_list',
+            'nota_detail',
+            'nota_create',
+            'nota_edit',
+            'nota_delete',
+        }
+
+        current_name = getattr(request.resolver_match, 'url_name', None)
+        if current_name not in allowed:
+            messages.error(request, 'Acceso restringido: el profesor solo puede ver estudiantes y gestionar notas.')
+            return redirect('dashboard')
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+
+
+
+
 @requerido_login
 def dashboard(request):
     """Dashboard principal"""
@@ -140,7 +211,7 @@ def usuario_list(request):
     context = {'page_obj': page_obj, 'roles': roles}
     return render(request, 'accounts/usuario_list.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def usuario_detail(request, pk):
     """Muestra el detalle de un usuario"""
@@ -148,7 +219,7 @@ def usuario_detail(request, pk):
     context = {'usuario': usuario}
     return render(request, 'accounts/usuario_detail.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def usuario_create(request):
     """Crea un nuevo usuario"""
@@ -183,7 +254,7 @@ def usuario_create(request):
     context = {'roles': roles}
     return render(request, 'accounts/usuario_form.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def usuario_edit(request, pk):
     """Edita un usuario existente"""
@@ -209,7 +280,7 @@ def usuario_edit(request, pk):
     context = {'usuario': usuario, 'roles': roles}
     return render(request, 'accounts/usuario_form.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def usuario_delete(request, pk):
     """Elimina un usuario"""
@@ -225,7 +296,7 @@ def usuario_delete(request, pk):
 
 
 # ================= ROLES =================
-
+@estudiante_no_editable
 @requerido_login
 def rol_list(request):
     """Lista todos los roles"""
@@ -233,7 +304,7 @@ def rol_list(request):
     context = {'roles': rol_list}
     return render(request, 'accounts/rol_list.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def rol_create(request):
     """Crea un nuevo rol"""
@@ -255,7 +326,7 @@ def rol_create(request):
     
     return render(request, 'accounts/rol_form.html')
 
-
+@estudiante_no_editable
 @requerido_login
 def rol_edit(request, pk):
     """Edita un rol"""
@@ -272,7 +343,7 @@ def rol_edit(request, pk):
     context = {'rol': rol}
     return render(request, 'accounts/rol_form.html', context)
 
-
+@estudiante_no_editable
 @requerido_login
 def rol_delete(request, pk):
     """Elimina un rol"""

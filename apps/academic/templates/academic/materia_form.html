@@ -9,45 +9,79 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white">
                     <h4 class="mb-0">
-                        <i class="bi bi-book"></i> 
+                        <i class="bi bi-book"></i>
                         {% if materia %}Editar{% else %}Nueva{% endif %} Materia
                     </h4>
                 </div>
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
-                        
+
                         <div class="mb-3">
                             <label for="id_nombre_materia" class="form-label">Nombre de la Materia</label>
-                            <input type="text" 
-                                   name="nombre_materia" 
-                                   class="form-control" 
-                                   id="id_nombre_materia" 
+                            <input type="text"
+                                   name="nombre_materia"
+                                   class="form-control"
+                                   id="id_nombre_materia"
                                    value="{{ materia.nombre_materia|default:'' }}"
                                    required>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="id_descripcion" class="form-label">Descripción</label>
-                            <textarea name="descripcion" 
-                                     class="form-control" 
-                                     id="id_descripcion" 
-                                     rows="3">{{ materia.descripcion|default:'' }}</textarea>
+                            <textarea name="descripcion"
+                                      class="form-control"
+                                      id="id_descripcion"
+                                      rows="3">{{ materia.descripcion|default:'' }}</textarea>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="id_intensidad_horaria" class="form-label">Intensidad Horaria</label>
-                            <input type="number" 
-                                   name="intensidad_horaria" 
-                                   class="form-control" 
-                                   id="id_intensidad_horaria" 
+                            <input type="number"
+                                   name="intensidad_horaria"
+                                   class="form-control"
+                                   id="id_intensidad_horaria"
                                    value="{{ materia.intensidad_horaria|default:'0' }}"
                                    min="0">
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="id_grado" class="form-label">Grado</label>
                             <select name="id_grado" class="form-select" id="id_grado" required>
                                 <option value="">Seleccionar...</option>
                                 {% for grado in degrees %}
-                                <option value="{{ grado.pk }}" {% if materia.id_grado_id == grado.pk %}selected
+                                    <option value="{{ grado.pk }}" {% if materia and materia.id_grado_id == grado.pk %}selected{% endif %}>
+                                        {{ grado.nombre_grado }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_profesor" class="form-label">Profesor</label>
+                            <select name="id_profesor" class="form-select" id="id_profesor">
+                                <option value="">(Opcional) Seleccionar...</option>
+                                {% for profesor in profesores %}
+                                    <option value="{{ profesor.pk }}" {% if materia and materia.id_profesor_id == profesor.pk %}selected{% endif %}>
+                                        {{ profesor.nombre_completo|default:profesor.apellido }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Guardar
+                            </button>
+                            <a class="btn btn-outline-secondary" href="{% url 'materia_list' %}">
+                                Volver
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -10,11 +10,15 @@ from django.db.models import Q
 from .models import Tarea
 from apps.academic.models import Materia
 from apps.people.models import Profesor
+from apps.accounts.views import requerido_login, estudiante_no_editable
+
+
+
 
 
 # ================= TAREA =================
 
-@login_required
+@requerido_login
 def tarea_list(request):
     """Lista todas las tareas"""
     tarea_list = Tarea.objects.all().order_by('-created_at')
@@ -46,7 +50,7 @@ def tarea_list(request):
     return render(request, 'assignments/tarea_list.html', context)
 
 
-@login_required
+@requerido_login
 def tarea_detail(request, pk):
     """Muestra el detalle de una tarea"""
     tarea = get_object_or_404(Tarea, pk=pk)
@@ -54,7 +58,8 @@ def tarea_detail(request, pk):
     return render(request, 'assignments/tarea_detail.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
 def tarea_create(request):
     """Crea una nueva tarea"""
     if request.method == 'POST':
@@ -89,7 +94,8 @@ def tarea_create(request):
     return render(request, 'assignments/tarea_form.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
 def tarea_edit(request, pk):
     """Edita una tarea"""
     tarea = get_object_or_404(Tarea, pk=pk)
@@ -111,7 +117,8 @@ def tarea_edit(request, pk):
     return render(request, 'assignments/tarea_form.html', context)
 
 
-@login_required
+@requerido_login
+@estudiante_no_editable
 def tarea_delete(request, pk):
     """Elimina una tarea"""
     tarea = get_object_or_404(Tarea, pk=pk)
